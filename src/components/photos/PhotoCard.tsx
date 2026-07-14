@@ -10,8 +10,9 @@ interface PhotoCardProps {
 export default function PhotoCard({ photo, onClick }: PhotoCardProps) {
   const [loaded, setLoaded] = useState(false)
 
+  // Use the stored secure_url directly if available, otherwise build from cloudinary_id
+  const fullSrc = photo.secure_url || cloudinaryUrl(photo.cloudinary_id, { width: 800 })
   const blurSrc = cloudinaryBlurUrl(photo.cloudinary_id)
-  const fullSrc = cloudinaryUrl(photo.cloudinary_id, { width: 800 })
 
   return (
     <div
@@ -19,21 +20,20 @@ export default function PhotoCard({ photo, onClick }: PhotoCardProps) {
       style={{ aspectRatio: `${photo.width}/${photo.height}` }}
       onClick={() => onClick(photo)}
     >
-      {/* Blur placeholder */}
-      <img
-        src={blurSrc}
-        aria-hidden="true"
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-          loaded ? 'opacity-0' : 'opacity-100'
-        }`}
-        style={{
-          backgroundImage: `url(${blurSrc})`,
-          backgroundSize: 'cover',
-          filter: 'blur(8px)',
-          transform: 'scale(1.05)',
-        }}
-        alt=""
-      />
+      {/* Blur placeholder — shown until full image loads */}
+      {!loaded && (
+        <div
+          className="absolute inset-0 w-full h-full bg-neutral-800"
+          style={{
+            backgroundImage: `url(${blurSrc})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'blur(8px)',
+            transform: 'scale(1.05)',
+          }}
+          aria-hidden="true"
+        />
+      )}
 
       {/* Full image */}
       <img

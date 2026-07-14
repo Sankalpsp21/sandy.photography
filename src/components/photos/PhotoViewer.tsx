@@ -118,6 +118,8 @@ export default function PhotoViewer({
 
   const showExif = hasExif(photo)
   const shareUrl = `${window.location.origin}/photo/${photo.id}`
+  // Use stored secure_url directly for full resolution; fall back to built URL
+  const fullResUrl = photo.secure_url || cloudinaryFullResUrl(photo.cloudinary_id)
 
   return (
     <div
@@ -135,7 +137,7 @@ export default function PhotoViewer({
           onClick={() => setFullscreen(false)}
         >
           <img
-            src={cloudinaryFullResUrl(photo.cloudinary_id)}
+            src={fullResUrl}
             alt={photo.title ?? photo.description ?? 'Photo'}
             className="max-w-full max-h-full object-contain"
           />
@@ -157,7 +159,7 @@ export default function PhotoViewer({
             {/* Photo area */}
             <div className="flex-1 flex items-center justify-center p-4 md:p-8 min-h-0">
               <img
-                src={cloudinaryFullResUrl(photo.cloudinary_id)}
+                src={fullResUrl}
                 alt={photo.title ?? photo.description ?? 'Photo'}
                 className="max-w-full max-h-full object-contain rounded-sm"
                 style={{ maxHeight: 'calc(100vh - 2rem)' }}
