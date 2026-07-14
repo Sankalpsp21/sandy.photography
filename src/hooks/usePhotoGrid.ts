@@ -18,7 +18,10 @@ export function usePhotoGrid(photos: Photo[]): {
   containerRef: React.RefObject<HTMLDivElement | null>
 } {
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const [containerWidth, setContainerWidth] = useState(1280)
+  const [containerWidth, setContainerWidth] = useState(() => {
+    // Default to window width so the initial render is correct on mobile
+    return typeof window !== 'undefined' ? window.innerWidth : 1280
+  })
 
   useEffect(() => {
     const el = containerRef.current
