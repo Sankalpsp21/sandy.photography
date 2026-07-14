@@ -21,17 +21,17 @@ export default function AboutPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-neutral-400">Loading…</div>
+      <div className="min-h-screen bg-theme text-theme flex items-center justify-center">
+        <div className="text-theme-muted">Loading…</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-theme text-theme">
       <div className="max-w-2xl mx-auto px-4 py-16">
         {!about ? (
-          <p className="text-neutral-500 text-center py-16">
+          <p className="text-theme-subtle text-center py-16">
             About page coming soon.
           </p>
         ) : (
@@ -42,21 +42,21 @@ export default function AboutPage() {
                 <img
                   src={about.profile_photo_url}
                   alt="Sandy Patil"
-                  className="w-28 h-28 rounded-full object-cover border-2 border-white/10"
+                  className="w-28 h-28 rounded-full object-cover border-2 border-theme"
                 />
               </div>
             )}
 
             {/* Name */}
             <div className="text-center">
-              <h1 className="text-3xl font-bold text-white">Sandy Patil</h1>
+              <h1 className="text-3xl font-bold text-theme">Sandy Patil</h1>
             </div>
 
             {/* Bio */}
             {about.bio && (
               <div className="space-y-4">
                 {about.bio.split('\n\n').map((para, i) => (
-                  <p key={i} className="text-neutral-300 leading-relaxed">
+                  <p key={i} className="text-theme-muted leading-relaxed">
                     {para}
                   </p>
                 ))}
@@ -72,7 +72,7 @@ export default function AboutPage() {
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-white underline underline-offset-4 hover:text-neutral-300 transition-colors"
+                      className="text-white underline underline-offset-4 hover:text-theme-muted transition-colors"
                     >
                       {link.label}
                     </a>

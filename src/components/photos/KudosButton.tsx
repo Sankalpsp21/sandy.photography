@@ -18,8 +18,8 @@ export default function KudosButton({ itemId, itemType, initialCount = 0 }: Kudo
       aria-label="Give kudos"
       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors min-w-[44px] min-h-[44px] ${
         maxed
-          ? 'bg-white/5 text-neutral-500 cursor-default'
-          : 'bg-white/10 hover:bg-white/20 text-white cursor-pointer'
+          ? 'bg-white/5 text-theme-subtle cursor-default'
+          : 'bg-white/10 hover:bg-white/20 text-theme cursor-pointer'
       }`}
     >
       <motion.span

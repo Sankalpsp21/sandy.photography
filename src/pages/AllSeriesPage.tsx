@@ -10,16 +10,16 @@ interface SeriesWithPhotos extends Series {
 
 function SkeletonCard() {
   return (
-    <div className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden animate-pulse">
+    <div className="bg-theme-subtle border border-theme rounded-xl overflow-hidden animate-pulse">
       <div className="grid grid-cols-2 gap-0.5">
         {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="aspect-square bg-neutral-800" />
+          <div key={i} className="aspect-square bg-theme-elevated" />
         ))}
       </div>
       <div className="p-4 space-y-2">
-        <div className="h-4 bg-neutral-800 rounded w-3/4" />
-        <div className="h-3 bg-neutral-800 rounded w-full" />
-        <div className="h-3 bg-neutral-800 rounded w-1/2" />
+        <div className="h-4 bg-theme-elevated rounded w-3/4" />
+        <div className="h-3 bg-theme-elevated rounded w-full" />
+        <div className="h-3 bg-theme-elevated rounded w-1/2" />
       </div>
     </div>
   )
@@ -74,12 +74,12 @@ export default function AllSeriesPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-theme text-theme">
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-white">All Series</h1>
+          <h1 className="text-3xl font-semibold text-theme">All Series</h1>
           {!loading && (
-            <p className="text-neutral-400 mt-1">
+            <p className="text-theme-muted mt-1">
               {seriesList.length} series
             </p>
           )}
@@ -92,7 +92,7 @@ export default function AllSeriesPage() {
             ))}
           </div>
         ) : seriesList.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-neutral-400">
+          <div className="flex flex-col items-center justify-center py-24 text-theme-muted">
             <p className="text-lg">No series yet.</p>
           </div>
         ) : (

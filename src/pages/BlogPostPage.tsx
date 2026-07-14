@@ -31,18 +31,18 @@ export default function BlogPostPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-neutral-400">Loading…</div>
+      <div className="min-h-screen bg-theme text-theme flex items-center justify-center">
+        <div className="text-theme-muted">Loading…</div>
       </div>
     )
   }
 
   if (notFound || !post) {
     return (
-      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
+      <div className="min-h-screen bg-theme text-theme flex flex-col items-center justify-center gap-4">
         <h1 className="text-4xl font-bold">404</h1>
-        <p className="text-neutral-400">Post not found.</p>
-        <Link to="/blog" className="text-white underline hover:text-neutral-300 transition-colors">
+        <p className="text-theme-muted">Post not found.</p>
+        <Link to="/blog" className="text-white underline hover:text-theme-muted transition-colors">
           ← Back to Writing
         </Link>
       </div>
@@ -50,7 +50,7 @@ export default function BlogPostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-theme text-theme">
       <BlogPostLayout post={post} />
     </div>
   )

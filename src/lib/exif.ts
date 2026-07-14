@@ -13,8 +13,24 @@ export interface ExifData {
 }
 
 /**
- * Crop factor lookup table for common cameras.
- * Key format: "Make Model" (lowercase)
+ * Format shutter speed as a human-readable fraction (e.g. 0.0015625 → "1/640")
+ */
+export function formatShutterSpeed(seconds: number): string {
+  if (seconds >= 1) return `${seconds}s`
+  const denominator = Math.round(1 / seconds)
+  return `1/${denominator}`
+}
+
+/**
+ * Calculate 35mm equivalent focal length.
+ */
+export function calculateFocalLengthEquiv(nativeMm: number, cropFactor: number): number {
+  return nativeMm * cropFactor
+}
+
+/**
+ * Crop factor lookup table keyed by "make model" (lowercase).
+ * Returns 1.0 for full-frame cameras or unknown models.
  */
 export const CROP_FACTORS: Record<string, number> = {
   // Fujifilm APS-C (1.5x)
@@ -53,18 +69,6 @@ export const CROP_FACTORS: Record<string, number> = {
   'nikon z7': 1.0,
 }
 
-/**
- * Calculate 35mm equivalent focal length.
- * equiv = nativeMm * cropFactor
- */
-export function calculateFocalLengthEquiv(nativeMm: number, cropFactor: number): number {
-  return nativeMm * cropFactor
-}
-
-/**
- * Look up crop factor for a camera by make and model.
- * Returns 1.0 (full frame) if not found.
- */
 export function getCropFactor(make?: string, model?: string): number {
   if (!make || !model) return 1.0
   const key = `${make} ${model}`.toLowerCase()
@@ -77,34 +81,44 @@ export function getCropFactor(make?: string, model?: string): number {
 export async function extractExif(file: File): Promise<ExifData> {
   try {
     const raw = await exifr.parse(file, {
-      pick: [
-        'FNumber',
-        'ExposureTime',
-        'ISO',
-        'FocalLength',
-        'Make',
-        'Model',
-        'LensMake',
-        'LensModel',
-        'DateTimeOriginal',
-        'CreateDate',
-      ],
+      tiff: true,
+      exif: true,
+      gps: false,
+      iptc: false,
+      xmp: false,
     })
 
     if (!raw) return {}
 
     return {
-      aperture: raw.FNumber as number | undefined,
-      shutterSpeed: raw.ExposureTime as number | undefined,
-      iso: raw.ISO as number | undefined,
-      focalLengthNative: raw.FocalLength as number | undefined,
-      cameraMake: raw.Make as string | undefined,
-      cameraModel: raw.Model as string | undefined,
-      lensMake: raw.LensMake as string | undefined,
-      lensModel: raw.LensModel as string | undefined,
-      captureDate: (raw.DateTimeOriginal ?? raw.CreateDate) as Date | undefined,
+      aperture: raw.FNumber ?? raw.ApertureValue,
+      shutterSpeed: raw.ExposureTime ?? raw.ShutterSpeedValue,
+      iso: raw.ISO ?? raw.ISOSpeedRatings,
+      focalLengthNative: raw.FocalLength,
+      cameraMake: typeof raw.Make === 'string' ? raw.Make.trim() : undefined,
+      cameraModel: typeof raw.Model === 'string' ? raw.Model.trim() : undefined,
+      lensMake: typeof raw.LensMake === 'string' ? raw.LensMake.trim() : undefined,
+      lensModel: typeof raw.LensModel === 'string' ? raw.LensModel.trim() : undefined,
+      captureDate: raw.DateTimeOriginal ?? raw.DateTime ?? raw.CreateDate,
     }
   } catch {
-    return {}
+    // Try bare parse as fallback (no options)
+    try {
+      const raw = await exifr.parse(file)
+      if (!raw) return {}
+      return {
+        aperture: raw.FNumber,
+        shutterSpeed: raw.ExposureTime,
+        iso: raw.ISO ?? raw.ISOSpeedRatings,
+        focalLengthNative: raw.FocalLength,
+        cameraMake: typeof raw.Make === 'string' ? raw.Make.trim() : undefined,
+        cameraModel: typeof raw.Model === 'string' ? raw.Model.trim() : undefined,
+        lensMake: typeof raw.LensMake === 'string' ? raw.LensMake.trim() : undefined,
+        lensModel: typeof raw.LensModel === 'string' ? raw.LensModel.trim() : undefined,
+        captureDate: raw.DateTimeOriginal ?? raw.DateTime,
+      }
+    } catch {
+      return {}
+    }
   }
 }

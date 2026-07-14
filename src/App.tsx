@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import ProtectedRoute from './components/admin/ProtectedRoute'
 import Navigation from './components/layout/Navigation'
 import PageTransition from './components/layout/PageTransition'
+import { ThemeProvider } from './context/ThemeContext'
 
 import LandingPage from './pages/LandingPage'
 import PhotosPage from './pages/PhotosPage'
@@ -25,9 +26,9 @@ import AboutEditor from './pages/admin/AboutEditor'
 
 function RootLayout() {
   return (
-    <div className="bg-black min-h-screen text-white overflow-x-hidden">
+    <div className="bg-theme text-theme min-h-screen overflow-x-hidden transition-colors duration-200">
       <Navigation />
-      <div className="pt-16">
+      <div className="pt-20">
         <PageTransition>
           <Outlet />
         </PageTransition>
@@ -125,8 +126,10 @@ function AnimatedRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AnimatedRoutes />
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <AnimatedRoutes />
+      </BrowserRouter>
+    </ThemeProvider>
   )
 }

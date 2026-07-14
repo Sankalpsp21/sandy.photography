@@ -89,8 +89,12 @@ function uploadToCloudinary(
           reject(new Error('Invalid Cloudinary response'))
         }
       } else {
-        // Include the full response body for debugging
-        reject(new Error(`Cloudinary upload failed: ${xhr.statusText}`))
+        let body = xhr.responseText
+        try {
+          const parsed = JSON.parse(xhr.responseText)
+          body = parsed?.error?.message ?? body
+        } catch { /* ignore */ }
+        reject(new Error(`Cloudinary upload failed: ${body}`))
       }
     }
 
@@ -120,9 +124,9 @@ export async function uploadPhoto(
       ? calculateFocalLengthEquiv(exif.focalLengthNative, cropFactor)
       : undefined
 
-  // Step 3: Get signed upload params from Edge Function
+  // Step 3: Get a fresh signed upload URL for this specific file
   onProgress({ fileName, progress: 5, status: 'uploading' })
-  const sign = await getSignature(metadata.seriesId ? `sandy-photography` : undefined)
+  const sign = await getSignature('sandy-photography')
 
   // Step 4: Upload to Cloudinary with progress tracking
   const cloudinaryResult = await uploadToCloudinary(file, sign, (percent) => {

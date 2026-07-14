@@ -54,8 +54,8 @@ export default function BlogPostLayout({ post }: BlogPostLayoutProps) {
     <>
       <ReadingProgress />
       <article className="max-w-[680px] mx-auto px-4 py-12">
-        <h1 className="text-4xl font-bold text-white leading-tight mb-4">{post.title}</h1>
-        <div className="flex flex-wrap items-center gap-2 text-neutral-400 text-sm mb-10">
+        <h1 className="text-4xl font-bold text-theme leading-tight mb-4">{post.title}</h1>
+        <div className="flex flex-wrap items-center gap-2 text-theme-muted text-sm mb-10">
           {publishedDate && <span>{publishedDate}</span>}
           <span>·</span>
           <span>{mins} min read</span>
@@ -71,7 +71,7 @@ export default function BlogPostLayout({ post }: BlogPostLayoutProps) {
           <EditorContent editor={editor} />
         </div>
 
-        <div className="flex items-center gap-3 mt-12 pt-8 border-t border-white/10">
+        <div className="flex items-center gap-3 mt-12 pt-8 border-t border-theme">
           <KudosButton itemId={post.id} itemType="blog_post" initialCount={0} />
           <ShareButton title={post.title} url={shareUrl} />
         </div>

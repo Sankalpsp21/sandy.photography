@@ -82,25 +82,26 @@ export default function PhotosPage() {
   )
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="max-w-screen-2xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-theme text-theme">
+      {/* Padded header area */}
+      <div className="px-4 py-8">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-semibold mb-1">
             All Photos
             {!loading && (
-              <span className="text-neutral-400 text-xl font-normal ml-3">
+              <span className="text-theme-subtle text-xl font-normal ml-3">
                 {filteredPhotos.length}
               </span>
             )}
           </h1>
           {filter && (
-            <p className="text-neutral-400 text-sm">
+            <p className="text-theme-subtle text-sm">
               Filtered by:{' '}
-              <span className="text-white font-medium">{filter}</span>
+              <span className="text-theme font-medium">{filter}</span>
               <button
                 onClick={() => navigate('/photos')}
-                className="ml-2 text-neutral-500 hover:text-white transition-colors"
+                className="ml-2 text-neutral-400 hover:text-theme transition-colors"
                 aria-label="Clear filter"
               >
                 <X size={14} className="inline" />
@@ -121,12 +122,12 @@ export default function PhotosPage() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search photos…"
-              className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition-colors"
+              className="w-full bg-theme-subtle border border-theme rounded-lg pl-9 pr-4 py-2 text-sm text-theme placeholder-[var(--fg-subtle)] focus:outline-none focus:border-[var(--border-strong)] transition-colors"
             />
           </div>
           <button
             type="submit"
-            className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm transition-colors min-h-[44px]"
+            className="px-4 py-2 bg-theme-subtle hover:bg-theme-elevated rounded-lg text-sm transition-colors min-h-[44px]"
           >
             Search
           </button>
@@ -139,8 +140,8 @@ export default function PhotosPage() {
               onClick={() => navigate('/photos')}
               className={`px-3 py-1 rounded-full text-sm transition-colors min-h-[36px] ${
                 !filter
-                  ? 'bg-white text-black font-medium'
-                  : 'bg-white/10 text-neutral-300 hover:bg-white/20'
+                  ? '[background:var(--fg)] text-[var(--bg)] font-medium'
+                  : 'bg-theme-subtle text-theme-muted hover:bg-theme-elevated'
               }`}
             >
               All
@@ -151,8 +152,8 @@ export default function PhotosPage() {
                 onClick={() => handleTagClick(tag)}
                 className={`px-3 py-1 rounded-full text-sm transition-colors min-h-[36px] ${
                   filter === tag
-                    ? 'bg-white text-black font-medium'
-                    : 'bg-white/10 text-neutral-300 hover:bg-white/20'
+                    ? '[background:var(--fg)] text-[var(--bg)] font-medium'
+                    : 'bg-theme-subtle text-theme-muted hover:bg-theme-elevated'
                 }`}
               >
                 {tag}
@@ -160,14 +161,14 @@ export default function PhotosPage() {
             ))}
           </div>
         )}
-
-        {/* Photo grid */}
-        <PhotoGrid
-          photos={filteredPhotos}
-          onPhotoClick={handlePhotoClick}
-          filter={undefined}
-        />
       </div>
+
+      {/* Edge-to-edge photo grid — no horizontal padding */}
+      <PhotoGrid
+        photos={filteredPhotos}
+        onPhotoClick={handlePhotoClick}
+        filter={undefined}
+      />
 
       {/* Photo viewer */}
       {viewerIndex !== null && (

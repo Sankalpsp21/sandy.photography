@@ -23,7 +23,7 @@ export default function PhotoCard({ photo, onClick }: PhotoCardProps) {
       {/* Blur placeholder — shown until full image loads */}
       {!loaded && (
         <div
-          className="absolute inset-0 w-full h-full bg-neutral-800"
+          className="absolute inset-0 w-full h-full bg-theme-elevated"
           style={{
             backgroundImage: `url(${blurSrc})`,
             backgroundSize: 'cover',

@@ -54,17 +54,17 @@ export default function SeriesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-neutral-400">Loading…</div>
+      <div className="min-h-screen bg-theme flex items-center justify-center">
+        <div className="text-theme-muted">Loading…</div>
       </div>
     )
   }
 
   if (notFound || !series) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center text-white">
+      <div className="min-h-screen bg-theme flex flex-col items-center justify-center text-theme">
         <h1 className="text-2xl font-semibold mb-2">Series not found</h1>
-        <p className="text-neutral-400">The series "{slug}" doesn't exist.</p>
+        <p className="text-theme-muted">The series "{slug}" doesn't exist.</p>
       </div>
     )
   }
@@ -72,15 +72,15 @@ export default function SeriesPage() {
   const shareUrl = `${window.location.origin}/series/${series.slug}`
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-theme text-theme">
       <div className="max-w-6xl mx-auto px-4 py-10">
         {/* Header */}
         <div className="mb-8 space-y-3">
           <h1 className="text-3xl font-semibold">{series.title}</h1>
           {series.description && (
-            <p className="text-neutral-300 max-w-2xl">{series.description}</p>
+            <p className="text-theme-muted max-w-2xl">{series.description}</p>
           )}
-          <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-400">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-theme-muted">
             <span>{photos.length} photo{photos.length !== 1 ? 's' : ''}</span>
             <span>Created {new Date(series.created_at).toLocaleDateString()}</span>
             {series.updated_at && series.updated_at !== series.created_at && (
@@ -92,7 +92,7 @@ export default function SeriesPage() {
 
         {/* Photo grid */}
         {photos.length === 0 ? (
-          <div className="flex items-center justify-center py-24 text-neutral-400">
+          <div className="flex items-center justify-center py-24 text-theme-muted">
             <p>No photos in this series yet.</p>
           </div>
         ) : (

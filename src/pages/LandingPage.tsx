@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import type { Photo } from '../types'
-import PhotoCard from '../components/photos/PhotoCard'
+import PhotoGrid from '../components/photos/PhotoGrid'
 import PhotoViewer from '../components/photos/PhotoViewer'
 
 function fadeUpVariant(delay: number) {
@@ -39,7 +39,7 @@ export default function LandingPage() {
   )
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-theme text-theme">
       {/* Hero */}
       <section className="flex flex-col items-center justify-center min-h-[80vh] px-4 text-center">
         <motion.h1
@@ -49,7 +49,7 @@ export default function LandingPage() {
           Sandy Patil
         </motion.h1>
         <motion.p
-          className="text-xl sm:text-2xl text-neutral-400 mb-10"
+          className="text-xl sm:text-2xl text-theme-muted mb-10"
           {...fadeUpVariant(0.2)}
         >
           Photographer &amp; Developer
@@ -77,26 +77,22 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* Featured photos */}
+      {/* Featured photos — edge to edge, no padding */}
       {photos.length > 0 && (
-        <section className="max-w-screen-xl mx-auto px-4 pb-16" aria-label="Featured photos">
+        <section aria-label="Featured photos">
           <motion.div
-            className="flex items-center justify-between mb-6"
+            className="flex items-center justify-between mb-4 px-4"
             {...fadeUpVariant(0.6)}
           >
             <h2 className="text-xl font-semibold">Recent Photos</h2>
-            <Link to="/photos" className="flex items-center gap-1 text-sm text-neutral-400 hover:text-white transition-colors">
+            <Link to="/photos" className="flex items-center gap-1 text-sm text-theme-muted hover:text-theme transition-colors">
               View all <ArrowRight size={14} />
             </Link>
           </motion.div>
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
-            {...fadeUpVariant(0.7)}
-          >
-            {photos.map((photo) => (
-              <PhotoCard key={photo.id} photo={photo} onClick={handlePhotoClick} />
-            ))}
+          <motion.div {...fadeUpVariant(0.7)}>
+            <PhotoGrid photos={photos} onPhotoClick={handlePhotoClick} />
           </motion.div>
+          <div className="pb-16" />
         </section>
       )}
 
@@ -112,9 +108,9 @@ export default function LandingPage() {
             { to: '/about', label: 'About', desc: 'A bit about who I am.' },
           ].map(({ to, label, desc }) => (
             <Link key={to} to={to}
-              className="group border border-white/10 rounded-xl p-6 hover:border-white/30 hover:bg-white/5 transition-all">
+              className="group border border-theme rounded-xl p-6 hover:border-white/30 hover:bg-white/5 transition-all">
               <h3 className="text-white font-semibold text-lg mb-1 group-hover:text-neutral-100">{label}</h3>
-              <p className="text-neutral-500 text-sm">{desc}</p>
+              <p className="text-theme-subtle text-sm">{desc}</p>
             </Link>
           ))}
         </motion.div>

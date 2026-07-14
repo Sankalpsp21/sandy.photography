@@ -3,12 +3,28 @@ import { CheckCircle, XCircle, RefreshCw } from 'lucide-react'
 import UploadZone from '../../components/admin/UploadZone'
 import { uploadPhoto } from '../../lib/upload'
 import type { UploadProgress, PhotoMetadata } from '../../lib/upload'
+import { extractExif, getCropFactor, formatShutterSpeed } from '../../lib/exif'
 import type { Series } from '../../types'
 import { supabase } from '../../lib/supabase'
 
+interface ExifPreview {
+  cameraMake?: string
+  cameraModel?: string
+  lensMake?: string
+  lensModel?: string
+  aperture?: string
+  shutterSpeed?: string
+  iso?: number
+  focalLength?: number
+  focalLengthEquiv?: number
+  captureDate?: string
+}
+
 interface FileEntry {
+  id: string
   file: File
   metadata: PhotoMetadata
+  exif?: ExifPreview
   progress: UploadProgress
 }
 
@@ -22,6 +38,7 @@ function MetadataForm({
   onChange: (meta: PhotoMetadata) => void
 }) {
   const m = entry.metadata
+  const exif = entry.exif
 
   function update(patch: Partial<PhotoMetadata>) {
     onChange({ ...m, ...patch })
@@ -30,7 +47,7 @@ function MetadataForm({
   const prog = entry.progress
   const isDone = prog.status === 'done'
   const isError = prog.status === 'error'
-  const isUploading = prog.status === 'uploading' || prog.status === 'pending'
+  const isUploading = prog.status === 'uploading'
 
   return (
     <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 space-y-4">
@@ -40,6 +57,34 @@ function MetadataForm({
         {isDone && <CheckCircle size={20} className="text-green-400 flex-shrink-0" />}
         {isError && <XCircle size={20} className="text-red-400 flex-shrink-0" />}
       </div>
+
+      {/* EXIF preview — read-only display of what was extracted */}
+      {exif && (exif.cameraMake || exif.cameraModel || exif.aperture || exif.focalLength) ? (
+        <div className="bg-neutral-800/60 rounded-lg px-4 py-3 text-xs text-neutral-400 space-y-1">
+          <p className="text-neutral-300 font-medium text-xs uppercase tracking-wide mb-2">Extracted from EXIF</p>
+          {(exif.cameraMake || exif.cameraModel) && (
+            <div><span className="text-neutral-500">Camera: </span>{[exif.cameraMake, exif.cameraModel].filter(Boolean).join(' ')}</div>
+          )}
+          {(exif.lensMake || exif.lensModel) && (
+            <div><span className="text-neutral-500">Lens: </span>{[exif.lensMake, exif.lensModel].filter(Boolean).join(' ')}</div>
+          )}
+          {(exif.focalLength || exif.aperture || exif.shutterSpeed || exif.iso) && (
+            <div>
+              {[
+                exif.focalLength && `${exif.focalLength}mm${exif.focalLengthEquiv && exif.focalLengthEquiv !== exif.focalLength ? ` (${exif.focalLengthEquiv}mm eq.)` : ''}`,
+                exif.aperture && `ƒ/${exif.aperture}`,
+                exif.shutterSpeed && formatShutterSpeed(parseFloat(exif.shutterSpeed)),
+                exif.iso && `ISO ${exif.iso}`,
+              ].filter(Boolean).join(' · ')}
+            </div>
+          )}
+          {exif.captureDate && (
+            <div><span className="text-neutral-500">Date: </span>{exif.captureDate}</div>
+          )}
+        </div>
+      ) : exif !== undefined ? (
+        <p className="text-xs text-neutral-600 italic">No EXIF data found — fill in details manually (e.g. film scan or stripped metadata)</p>
+      ) : null}
 
       {/* Progress bar */}
       {(isUploading || isDone) && (
@@ -73,7 +118,7 @@ function MetadataForm({
           <label className="block text-xs text-neutral-400 mb-1">Capture Date</label>
           <input
             type="date"
-            value={m.captureDate ?? ''}
+            value={m.captureDate ?? exif?.captureDate ?? ''}
             onChange={(e) => update({ captureDate: e.target.value || undefined })}
             disabled={isUploading || isDone}
             className="w-full bg-neutral-800 border border-neutral-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 disabled:opacity-50"
@@ -127,9 +172,9 @@ function MetadataForm({
           </select>
         </div>
 
-        {/* Camera override */}
+        {/* Camera — pre-filled from EXIF, editable */}
         <div>
-          <label className="block text-xs text-neutral-400 mb-1">Camera Make (override)</label>
+          <label className="block text-xs text-neutral-400 mb-1">Camera Make</label>
           <input
             type="text"
             value={m.cameraOverride?.make ?? ''}
@@ -147,7 +192,7 @@ function MetadataForm({
         </div>
 
         <div>
-          <label className="block text-xs text-neutral-400 mb-1">Camera Model (override)</label>
+          <label className="block text-xs text-neutral-400 mb-1">Camera Model</label>
           <input
             type="text"
             value={m.cameraOverride?.model ?? ''}
@@ -164,9 +209,9 @@ function MetadataForm({
           />
         </div>
 
-        {/* Lens override */}
+        {/* Lens — pre-filled from EXIF, editable */}
         <div>
-          <label className="block text-xs text-neutral-400 mb-1">Lens Make (override)</label>
+          <label className="block text-xs text-neutral-400 mb-1">Lens Make</label>
           <input
             type="text"
             value={m.lensOverride?.make ?? ''}
@@ -184,7 +229,7 @@ function MetadataForm({
         </div>
 
         <div>
-          <label className="block text-xs text-neutral-400 mb-1">Lens Model (override)</label>
+          <label className="block text-xs text-neutral-400 mb-1">Lens Model</label>
           <input
             type="text"
             value={m.lensOverride?.model ?? ''}
@@ -222,12 +267,62 @@ export default function PhotoUploader() {
   }, [])
 
   function handleFilesAccepted(files: File[]) {
-    const newEntries: FileEntry[] = files.map((file) => ({
-      file,
-      metadata: {},
-      progress: { fileName: file.name, progress: 0, status: 'pending' },
-    }))
-    setEntries((prev) => [...prev, ...newEntries])
+    files.forEach(async (file) => {
+      const entryId = `${file.name}-${file.size}-${Date.now()}`
+
+      // Add entry immediately so the form appears
+      const initialEntry: FileEntry = {
+        id: entryId,
+        file,
+        metadata: {},
+        exif: undefined,
+        progress: { fileName: file.name, progress: 0, status: 'pending' },
+      }
+      setEntries((prev) => [...prev, initialEntry])
+
+      // Extract EXIF async and update the entry when ready
+      try {
+        const exif = await extractExif(file)
+        const cropFactor = getCropFactor(exif.cameraMake, exif.cameraModel)
+
+        const captureDate = exif.captureDate
+          ? exif.captureDate.toISOString().split('T')[0]
+          : undefined
+
+        const exifPreview: ExifPreview = {
+          cameraMake: exif.cameraMake,
+          cameraModel: exif.cameraModel,
+          lensMake: exif.lensMake,
+          lensModel: exif.lensModel,
+          aperture: exif.aperture != null ? String(exif.aperture) : undefined,
+          shutterSpeed: exif.shutterSpeed != null ? String(exif.shutterSpeed) : undefined,
+          iso: exif.iso,
+          focalLength: exif.focalLengthNative,
+          focalLengthEquiv: exif.focalLengthNative != null
+            ? Math.round(exif.focalLengthNative * cropFactor)
+            : undefined,
+          captureDate,
+        }
+
+        const prefilled: PhotoMetadata = {
+          captureDate,
+          cameraOverride: (exif.cameraMake || exif.cameraModel)
+            ? { make: exif.cameraMake ?? '', model: exif.cameraModel ?? '' }
+            : undefined,
+          lensOverride: (exif.lensMake || exif.lensModel)
+            ? { make: exif.lensMake ?? '', model: exif.lensModel ?? '' }
+            : undefined,
+        }
+
+        setEntries((prev) =>
+          prev.map((e) =>
+            e.id === entryId ? { ...e, metadata: prefilled, exif: exifPreview } : e
+          )
+        )
+      } catch (err) {
+        console.warn('[upload] EXIF extraction failed for', file.name, err)
+      }
+    })
   }
 
   function updateMetadata(index: number, meta: PhotoMetadata) {
@@ -303,7 +398,7 @@ export default function PhotoUploader() {
         {entries.length > 0 && (
           <div className="space-y-4">
             {entries.map((entry, i) => (
-              <div key={`${entry.file.name}-${i}`}>
+              <div key={entry.id}>
                 <MetadataForm
                   entry={entry}
                   series={series}

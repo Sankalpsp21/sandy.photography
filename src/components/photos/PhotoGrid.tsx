@@ -12,7 +12,7 @@ interface PhotoGridProps {
 
 function SkeletonCard() {
   return (
-    <div className="rounded-sm bg-neutral-800 animate-pulse" style={{ aspectRatio: '4/3' }} />
+    <div className="rounded-sm bg-theme-elevated animate-pulse" style={{ aspectRatio: '4/3' }} />
   )
 }
 
@@ -71,8 +71,8 @@ export default function PhotoGrid({ photos: photosProp, onPhotoClick, filter }: 
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 p-2">
-        {Array.from({ length: 8 }).map((_, i) => (
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-1">
+        {Array.from({ length: 6 }).map((_, i) => (
           <SkeletonCard key={i} />
         ))}
       </div>
@@ -81,16 +81,16 @@ export default function PhotoGrid({ photos: photosProp, onPhotoClick, filter }: 
 
   if (!loading && filteredPhotos.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-neutral-400">
+      <div className="flex flex-col items-center justify-center py-24 text-theme-muted">
         <p className="text-lg">No photos found{filter ? ` for "${filter}"` : ''}.</p>
       </div>
     )
   }
 
   return (
-    <div ref={containerRef} className="flex gap-2 p-2 items-start">
+    <div ref={containerRef} className="flex gap-1 items-start">
       {columns.map((col, colIdx) => (
-        <div key={colIdx} className="flex flex-col gap-2 flex-1 min-w-0">
+        <div key={colIdx} className="flex flex-col gap-1 flex-1 min-w-0">
           {col.map((photo) => (
             <PhotoCard key={photo.id} photo={photo} onClick={onPhotoClick} />
           ))}

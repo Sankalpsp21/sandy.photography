@@ -4,6 +4,7 @@ import { X, ChevronLeft, ChevronRight, Maximize2, Minimize2 } from 'lucide-react
 import type { Photo, Series } from '../../types'
 import { cloudinaryFullResUrl } from '../../lib/cloudinary'
 import { slugify } from '../../lib/utils'
+import { formatShutterSpeed } from '../../lib/exif'
 import { supabase } from '../../lib/supabase'
 import KudosButton from './KudosButton'
 import ShareButton from './ShareButton'
@@ -231,7 +232,7 @@ export default function PhotoViewer({
                       </div>
                     )}
                     {photo.aperture && <div>ƒ/{photo.aperture}</div>}
-                    {photo.shutter_speed && <div>{photo.shutter_speed}s</div>}
+                    {photo.shutter_speed && <div>{formatShutterSpeed(parseFloat(photo.shutter_speed))}</div>}
                     {photo.iso && <div>ISO {photo.iso}</div>}
                   </div>
                 )}

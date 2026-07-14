@@ -40,7 +40,7 @@ export default function ShareButton({ title, url, text }: ShareButtonProps) {
       <button
         onClick={share}
         aria-label="Share"
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-white/10 hover:bg-white/20 text-white transition-colors min-w-[44px] min-h-[44px]"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-white/10 hover:bg-white/20 text-theme transition-colors min-w-[44px] min-h-[44px]"
       >
         <Share2 size={16} />
         <span>Share</span>
@@ -53,7 +53,7 @@ export default function ShareButton({ title, url, text }: ShareButtonProps) {
       <DropdownMenu.Trigger asChild>
         <button
           aria-label="Share"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-white/10 hover:bg-white/20 text-white transition-colors min-w-[44px] min-h-[44px]"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-white/10 hover:bg-white/20 text-theme transition-colors min-w-[44px] min-h-[44px]"
         >
           <Share2 size={16} />
           <span>Share</span>
@@ -62,7 +62,7 @@ export default function ShareButton({ title, url, text }: ShareButtonProps) {
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="z-[100] min-w-[180px] bg-neutral-900 border border-white/10 rounded-lg shadow-xl p-1 text-sm text-white"
+          className="z-[100] min-w-[180px] bg-theme-subtle border border-theme rounded-lg shadow-xl p-1 text-sm text-theme"
           sideOffset={8}
           align="end"
         >

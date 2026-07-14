@@ -36,23 +36,23 @@ export default function LensBrowsePage() {
   }, [make, model, displayMake, displayModel])
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-theme text-theme">
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="mb-8">
           <h1 className="text-3xl font-semibold capitalize">{heading || 'Lens'}</h1>
           {!loading && (
-            <p className="text-neutral-400 mt-1">
+            <p className="text-theme-muted mt-1">
               {photos.length} photo{photos.length !== 1 ? 's' : ''}
             </p>
           )}
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-24 text-neutral-400">
+          <div className="flex items-center justify-center py-24 text-theme-muted">
             Loading…
           </div>
         ) : photos.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-neutral-400">
+          <div className="flex flex-col items-center justify-center py-24 text-theme-muted">
             <p className="text-lg">No photos found for this lens.</p>
           </div>
         ) : (

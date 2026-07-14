@@ -10,12 +10,12 @@ export default function SeriesCard({ series }: SeriesCardProps) {
   const previewPhotos = series.photos.slice(0, 4)
 
   return (
-    <div className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden hover:border-neutral-600 transition-colors group">
+    <div className="bg-theme-subtle border border-theme rounded-xl overflow-hidden hover:border-neutral-600 transition-colors group">
       {/* 2x2 preview grid */}
       <Link to={`/series/${series.slug}`} className="block">
         <div className="grid grid-cols-2 gap-0.5 group-hover:scale-[1.01] transition-transform duration-300">
           {previewPhotos.length === 0 ? (
-            <div className="col-span-2 aspect-square bg-neutral-800 flex items-center justify-center">
+            <div className="col-span-2 aspect-square bg-theme-elevated flex items-center justify-center">
               <span className="text-neutral-600 text-sm">No photos</span>
             </div>
           ) : previewPhotos.length === 1 ? (
@@ -49,16 +49,16 @@ export default function SeriesCard({ series }: SeriesCardProps) {
       <div className="p-4 space-y-1.5">
         <Link
           to={`/series/${series.slug}`}
-          className="block text-white font-semibold hover:text-neutral-200 transition-colors"
+          className="block text-theme font-semibold hover:text-neutral-200 transition-colors"
         >
           {series.title}
         </Link>
 
         {series.description && (
-          <p className="text-neutral-400 text-sm line-clamp-2">{series.description}</p>
+          <p className="text-theme-muted text-sm line-clamp-2">{series.description}</p>
         )}
 
-        <div className="flex items-center justify-between text-xs text-neutral-500 pt-1">
+        <div className="flex items-center justify-between text-xs text-theme-subtle pt-1">
           <span>
             {series.photoCount} photo{series.photoCount !== 1 ? 's' : ''}
           </span>

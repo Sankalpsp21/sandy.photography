@@ -11,7 +11,7 @@ function readingTime(contentText: string | undefined): number {
 
 function SkeletonCard() {
   return (
-    <div className="border border-white/10 rounded-xl p-6 animate-pulse">
+    <div className="border border-theme rounded-xl p-6 animate-pulse">
       <div className="h-6 bg-white/10 rounded w-3/4 mb-3" />
       <div className="h-4 bg-white/5 rounded w-1/3" />
     </div>
@@ -36,7 +36,7 @@ export default function BlogListPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-theme text-theme">
       <div className="max-w-2xl mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold mb-8">Writing</h1>
 
@@ -45,7 +45,7 @@ export default function BlogListPage() {
             {[1, 2, 3].map((i) => <SkeletonCard key={i} />)}
           </div>
         ) : posts.length === 0 ? (
-          <p className="text-neutral-500 text-center py-16">No posts yet.</p>
+          <p className="text-theme-subtle text-center py-16">No posts yet.</p>
         ) : (
           <div className="space-y-4">
             {posts.map((post) => {
@@ -61,12 +61,12 @@ export default function BlogListPage() {
                 <Link
                   key={post.id}
                   to={`/blog/${post.slug}`}
-                  className="block border border-white/10 rounded-xl p-6 hover:border-white/30 hover:bg-white/5 transition-all group"
+                  className="block border border-theme rounded-xl p-6 hover:border-white/30 hover:bg-white/5 transition-all group"
                 >
-                  <h2 className="text-xl font-semibold text-white group-hover:text-neutral-100 mb-2 leading-snug">
+                  <h2 className="text-xl font-semibold text-theme group-hover:text-neutral-100 mb-2 leading-snug">
                     {post.title}
                   </h2>
-                  <div className="flex items-center gap-3 text-sm text-neutral-500">
+                  <div className="flex items-center gap-3 text-sm text-theme-subtle">
                     {date && <span>{date}</span>}
                     <span>·</span>
                     <span>{mins} min read</span>
