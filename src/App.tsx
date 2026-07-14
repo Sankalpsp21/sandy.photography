@@ -25,7 +25,7 @@ import AboutEditor from './pages/admin/AboutEditor'
 
 function RootLayout() {
   return (
-    <div className="bg-black min-h-screen text-white">
+    <div className="bg-black min-h-screen text-white overflow-x-hidden">
       <Navigation />
       <div className="pt-16">
         <PageTransition>
@@ -36,14 +36,17 @@ function RootLayout() {
   )
 }
 
+
 function AnimatedRoutes() {
   const location = useLocation()
 
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
+        {/* Standalone page — no Navigation */}
         <Route path="/login" element={<LoginPage />} />
 
+        {/* All other pages share the root layout */}
         <Route element={<RootLayout />}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/photos" element={<PhotosPage />} />
@@ -57,6 +60,7 @@ function AnimatedRoutes() {
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/about" element={<AboutPage />} />
 
+          {/* Protected admin routes */}
           <Route
             path="/admin"
             element={

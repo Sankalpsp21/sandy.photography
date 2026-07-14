@@ -89,7 +89,8 @@ function uploadToCloudinary(
           reject(new Error('Invalid Cloudinary response'))
         }
       } else {
-        reject(new Error(`Cloudinary upload failed: ${xhr.statusText}`))
+        // Include the full response body for debugging
+        reject(new Error(`Cloudinary upload failed: ${xhr.status} — ${xhr.responseText}`))
       }
     }
 
